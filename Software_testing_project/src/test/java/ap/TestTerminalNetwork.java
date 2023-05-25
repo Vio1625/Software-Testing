@@ -12,15 +12,15 @@ public class TestTerminalNetwork {
     // Test cases: 1,2,3,4,6,7,10,12
     public void testTerminalNetwork1() {
         //Arrange
-        TerminalNetwork tn = new TerminalNetwork("abcd", 50000);
+        TerminalNetwork tn = new TerminalNetwork("abcd", 10000);
         List<String> clientIds = new ArrayList<String>();
         List<String> terminalIds = new ArrayList<String>();
-        for (int i = 0; i < 50000; i++)
+        for (int i = 0; i < 10000; i++)
         {
             //identifier is unique
             tn.addClient(new Client(String.valueOf(i), null));
             clientIds.add(String.valueOf(i));
-            if (i < 10000)
+            if (i < 100)
             {
                 // all the terminals will be associated with a client
                 // but not all clients will have a terminal
@@ -30,17 +30,19 @@ public class TestTerminalNetwork {
         }
         
         //Act
-        
+        tn.setName("efgh");
+
         //Assert
-        assertEquals(tn.getName(), "abcd");
+        assertEquals(tn.getName(), "efgh");
+        assertEquals(tn.getMaxClients(), 10000);
         List<Client> listOfCLients = tn.getClients();
-        assertEquals(listOfCLients.size(), 50000);
+        assertEquals(listOfCLients.size(), 10000);
         for (Client c : tn.getClients())
         {
             assertTrue(clientIds.contains(c.getName()));
         }
         List<Terminal> listOfTerminal = tn.getTerminal();
-        assertEquals(listOfTerminal.size(), 10000);
+        assertEquals(listOfTerminal.size(), 100);
         for (Terminal t : tn.getTerminal())
         {
             assertTrue(terminalIds.contains(t.id));
@@ -48,13 +50,67 @@ public class TestTerminalNetwork {
     }
 
     public void testTerminalNetwork2() {
-        assertThrows(InvalidInvocationException.class,
-            ()->{ new TerminalNetwork("abcde", 50001);}); 
-    }
+        //Arrange
+        TerminalNetwork tn = new TerminalNetwork("abcde", 10500);
+        List<String> clientIds = new ArrayList<String>();
+        List<String> terminalIds = new ArrayList<String>();
+        Client lastClient;
+        for (int i = 0; i < 10500; i++)
+        {
+            //identifier is unique
+            lastClient = new Client(String.valueOf(i), null);
+            tn.addClient(lastClient);
+            clientIds.add(String.valueOf(i));
+            if (i < 100)
+            {
+                // all the terminals will be associated with a client
+                // but not all clients will have a terminal
+                tn.addTerminal(new Terminal("terminal" + String.valueOf(i)), String.valueOf(i));
+                terminalIds.add("terminal" + String.valueOf(i));
+            }
+        }
+        
+        //Act
+        try 
+        {
+            tn.addClient(new Client(String.valueOf(10500), null));
 
+            //should throw an exception before reaching here
+            fail("Expected exception");
+        }
+        catch (InvalidInvocationException e)
+        {
+            
+        }
+        //We can however, remove the last one and add it again
+        tn.removeClient(lastClient);
+        tn.addClient(lastClient);
+
+        //Or raise the maximum number of clients
+        tn.setMaxClients(10501);
+        tn.addClient(new Client(String.valueOf(10500), null));
+        clientIds.add(String.valueOf(10500));
+
+        //Assert
+        assertEquals(tn.getName(), "abcde");
+        assertEquals(tn.getMaxClients(), 10501);
+        List<Client> listOfCLients = tn.getClients();
+        assertEquals(listOfCLients.size(), 10501);
+        for (Client c : tn.getClients())
+        {
+            assertTrue(clientIds.contains(c.getName()));
+        }
+        List<Terminal> listOfTerminal = tn.getTerminal();
+        assertEquals(listOfTerminal.size(), 100);
+        for (Terminal t : tn.getTerminal())
+        {
+            assertTrue(terminalIds.contains(t.id));
+        } 
+    }
+    
     public void testTerminalNetwork3() {
         //Arrange
-        TerminalNetwork tn = new TerminalNetwork("abcde", 500);
+        TerminalNetwork tn = new TerminalNetwork("abcde", 50000);
         List<String> clientIds = new ArrayList<String>();
         List<String> terminalIds = new ArrayList<String>();
         for (int i = 0; i < 500; i++)
@@ -71,6 +127,7 @@ public class TestTerminalNetwork {
         
         //Assert
         assertEquals(tn.getName(), "abcde");
+        assertEquals(tn.getMaxClients(), 50000);
         List<Client> listOfCLients = tn.getClients();
         assertEquals(listOfCLients.size(), 500);
         for (Client c : tn.getClients())
@@ -86,54 +143,16 @@ public class TestTerminalNetwork {
     }
 
     public void testTerminalNetwork4() {
-        //Arrange
-        TerminalNetwork tn = new TerminalNetwork("abcde", 749);
-        List<String> clientIds = new ArrayList<String>();
-        List<String> terminalIds = new ArrayList<String>();
-        for (int i = 0; i < 749; i++)
-        {
-            //identifier is unique
-            tn.addClient(new Client(String.valueOf(i), null));
-            clientIds.add(String.valueOf(i));
-            // all the terminals will be associated with a client
-            tn.addTerminal(new Terminal("terminal" + String.valueOf(i)), String.valueOf(i));
-            terminalIds.add("terminal" + String.valueOf(i));
-        }
-        
-        //Act
-        try 
-        {
-            tn.addClient(new Client(String.valueOf(749), null));
-
-            //should throw an exception before reaching here
-            fail("Expected exception");
-        }
-        catch (InvalidInvocationException e)
-        {
-            
-        }
-        //Assert
-        assertEquals(tn.getName(), "abcde");
-        List<Client> listOfCLients = tn.getClients();
-        assertEquals(listOfCLients.size(), 749);
-        for (Client c : tn.getClients())
-        {
-            assertTrue(clientIds.contains(c.getName()));
-        }
-        List<Terminal> listOfTerminal = tn.getTerminal();
-        assertEquals(listOfTerminal.size(), 749);
-        for (Terminal t : tn.getTerminal())
-        {
-            assertTrue(terminalIds.contains(t.id));
-        } 
+        assertThrows(InvalidInvocationException.class,
+            ()->{ new TerminalNetwork("abcde", 50001);}); 
     }
 
     public void testTerminalNetwork6() {
         //Arrange
-        TerminalNetwork tn = new TerminalNetwork("abcdefg", 5000);
+        TerminalNetwork tn = new TerminalNetwork("abcdefg", 11000);
         List<String> clientIds = new ArrayList<String>();
         List<String> terminalIds = new ArrayList<String>();
-        for (int i = 0; i < 4999; i++)
+        for (int i = 0; i < 1100; i++)
         {
             //identifier is unique
             tn.addClient(new Client(String.valueOf(i), null));
@@ -149,21 +168,22 @@ public class TestTerminalNetwork {
         // Repeat the last id and verify exception
         try
         {
-            tn.addClient(new Client("4998", null));
+            tn.addClient(new Client("1099", null));
             
             fail("Expected exception");
         }
         catch (InvalidInvocationException e) {}
 
         assertEquals(tn.getName(), "abcdefg");
+        assertEquals(tn.getMaxClients(), 11000);
         List<Client> listOfCLients = tn.getClients();
-        assertEquals(listOfCLients.size(), 4999);
+        assertEquals(listOfCLients.size(), 1100);
         for (Client c : tn.getClients())
         {
             assertTrue(clientIds.contains(c.getName()));
         }
         List<Terminal> listOfTerminal = tn.getTerminal();
-        assertEquals(listOfTerminal.size(), 4999);
+        assertEquals(listOfTerminal.size(), 1100);
         for (Terminal t : tn.getTerminal())
         {
             assertTrue(terminalIds.contains(t.id));
@@ -172,10 +192,11 @@ public class TestTerminalNetwork {
 
     public void testTerminalNetwork7() {
         //Arrange
-        TerminalNetwork tn = new TerminalNetwork("abc", 10000);
+        TerminalNetwork tn = new TerminalNetwork("abc", 12000);
+        tn.setMaxClients(9500);
         List<String> clientIds = new ArrayList<String>();
         List<String> terminalIds = new ArrayList<String>();
-        for (int i = 0; i < 10000; i++)
+        for (int i = 0; i < 1200; i++)
         {
             //identifier is unique
             tn.addClient(new Client(String.valueOf(i), null));
@@ -189,14 +210,15 @@ public class TestTerminalNetwork {
         
         //Assert
         assertEquals(tn.getName(), "abc");
+        assertEquals(tn.getMaxClients(), 9500);
         List<Client> listOfCLients = tn.getClients();
-        assertEquals(listOfCLients.size(), 10000);
+        assertEquals(listOfCLients.size(), 1200);
         for (Client c : tn.getClients())
         {
             assertTrue(clientIds.contains(c.getName()));
         }
         List<Terminal> listOfTerminal = tn.getTerminal();
-        assertEquals(listOfTerminal.size(), 10000);
+        assertEquals(listOfTerminal.size(), 1200);
         for (Terminal t : tn.getTerminal())
         {
             assertTrue(terminalIds.contains(t.id));
@@ -205,10 +227,10 @@ public class TestTerminalNetwork {
 
     public void testTerminalNetwork10() {
         //Arrange
-        TerminalNetwork tn = new TerminalNetwork("abcdefghi", 30000);
+        TerminalNetwork tn = new TerminalNetwork("abcdefghi", 15000);
         List<String> clientIds = new ArrayList<String>();
         List<String> terminalIds = new ArrayList<String>();
-        for (int i = 0; i < 30000; i++)
+        for (int i = 0; i < 1500; i++)
         {
             //identifier is unique
             tn.addClient(new Client(String.valueOf(i), null));
@@ -222,14 +244,15 @@ public class TestTerminalNetwork {
         
         //Assert
         assertEquals(tn.getName(), "abcdefghi");
+        assertEquals(tn.getMaxClients(), 15000);
         List<Client> listOfCLients = tn.getClients();
-        assertEquals(listOfCLients.size(), 30000);
+        assertEquals(listOfCLients.size(), 1500);
         for (Client c : tn.getClients())
         {
             assertTrue(clientIds.contains(c.getName()));
         }
         List<Terminal> listOfTerminal = tn.getTerminal();
-        assertEquals(listOfTerminal.size(), 30000);
+        assertEquals(listOfTerminal.size(), 1500);
         for (Terminal t : tn.getTerminal())
         {
             assertTrue(terminalIds.contains(t.id));
@@ -238,10 +261,10 @@ public class TestTerminalNetwork {
 
     public void testTerminalNetwork12() {
         //Arrange
-        TerminalNetwork tn = new TerminalNetwork("abcd", 45000);
+        TerminalNetwork tn = new TerminalNetwork("abcd", 17000);
         List<String> clientIds = new ArrayList<String>();
         List<String> terminalIds = new ArrayList<String>();
-        for (int i = 0; i < 45000; i++)
+        for (int i = 0; i < 1700; i++)
         {
             //identifier is unique
             tn.addClient(new Client(String.valueOf(i), null));
@@ -266,8 +289,9 @@ public class TestTerminalNetwork {
         }
         catch (InvalidInvocationException e) { }
         assertEquals(tn.getName(), "abcd");
+        assertEquals(tn.getMaxClients(), 17000);
         List<Client> listOfCLients = tn.getClients();
-        assertEquals(listOfCLients.size(), 45000);
+        assertEquals(listOfCLients.size(), 1700);
         for (Client c : tn.getClients())
         {
             assertTrue(clientIds.contains(c.getName()));
