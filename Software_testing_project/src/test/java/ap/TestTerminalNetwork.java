@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 @Test
 public class TestTerminalNetwork {
-    /* To complete */
     // Test cases: 1,2,3,4,6,7,10,12
     public void testTerminalNetwork1() {
         //Arrange

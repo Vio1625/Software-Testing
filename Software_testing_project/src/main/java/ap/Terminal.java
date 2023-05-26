@@ -1,6 +1,8 @@
 package ap;
 
 public class Terminal {
+    public String id;
+    
     Terminal(String id) { /*....*/ }
 
     public void turnOff() { /*....*/ }
